@@ -118,10 +118,10 @@
                       "C-a" #'beginning-of-line)
   (general-define-key
    :keymaps 'override
-   "s-h" #'windmove-left
-   "s-j" #'windmove-down
-   "s-k" #'windmove-up
-   "s-l" #'windmove-right)
+   "C-h" #'windmove-left
+   "C-j" #'windmove-down
+   "C-k" #'windmove-up
+   "C-l" #'windmove-right)
 
   (general-define-key
    :keymaps 'override

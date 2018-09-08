@@ -47,11 +47,12 @@
 
 (setq package-enable-at-startup nil)
 (setq custom-file (concat moon-local-dir "custom.el"))
-;(load custom-file)
+
 (when (file-exists-p custom-file)
   (load custom-file))
 
-
+(add-hook 'kill-emacs-query-functions
+               'custom-prompt-customize-unsaved-options)
 ;;
 ;; Func
 ;;
@@ -70,35 +71,67 @@
 ;; Init
 ;;
 
-;; optimization on startup
-;; https://github.com/hlissner/doom-emacs/wiki/FAQ#how-is-dooms-startup-so-fast
-(defvar tmp-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
-(setq gc-cons-threshold 402653184
-      gc-cons-percentage 0.6)
-
 (load (concat moon-core-dir "core-package"))
 (load| core-ui)
 (load| core-edit)
+(load| core-keybinds)
 
-(defun moon-finalize ()
-  "The main starup function."
-  (timeit| "package-init"
-    (moon-initialize-load-path))
-  (unless noninteractive
-    (moon-load-star))
-  
-  (unless noninteractive
-    (dolist (hook '(moon-init-hook moon-post-init-hook))
-    (run-hook-with-args hook)))
-  
-  ;; If you forget to reset this, you'll get stuttering and random freezes!
-  (setq gc-cons-threshold 800000
-        gc-cons-percentage 0.1
-        file-name-handler-alist tmp-file-name-handler-alist
-        ))
+(fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
-(add-hook 'emacs-startup-hook #'moon-finalize t)
+(setq-default
+ ad-redefinition-action              'accept                               ; silence advised function warnings
+ apropos-do-all                      t                                     ; make `apropos' more useful
+ compilation-always-kill             t                                     ; kill compilation process before starting another
+ compilation-ask-about-save          nil                                   ; save all buffers on `compile'
+ confirm-nonexistent-file-or-buffer  t
+ enable-recursive-minibuffers        nil
+ idle-update-delay                   2                                     ; update ui less often
+
+ ;; keep the point out of the minibuffer
+ minibuffer-prompt-properties        '(read-only
+                                       t
+                                       point-entered
+                                       minibuffer-avoid-prompt
+                                       face
+                                       minibuffer-prompt)
+
+ ;; History & backup settings (save nothing, that's what git is for)
+ create-lockfiles                    nil
+ history-length                      500
+ make-backup-files                   nil
+ auto-save-default                   t
+ backup-directory-alist              `((".*" . ,moon-cache-dir))
+ auto-save-file-name-transforms      `((".*" ,moon-cache-dir t))
+ auto-save-list-file-name            (concat moon-cache-dir "autosave")
+ auto-save-timeout                   5
+
+ ;; files
+ abbrev-file-name                    (concat moon-local-dir "abbrev.el")
+ recentf-save-file                   (concat moon-cache-dir "recentf")
+ recentf-max-saved-items             300
+ 
+ ;; edit
+ indent-tabs-mode                    nil
+ backup-inhibited                    t
+ sentence-end-double-space           nil
+ kill-ring-max                       200
+
+ ;;ui
+ use-dialog-box                      nil
+ visible-cursor                      nil
+ use-dialog-box                      nil
+ ring-bell-function                  #'ignore
+ visible-bell                        nil
+ frame-title-format                  '("%f")                                 ; current file name
+ split-height-threshold              nil
+ )
+
+(blink-cursor-mode                   -1)
+
+;;;; natural title bar
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance . dark))
+
 
 
 (provide 'core)

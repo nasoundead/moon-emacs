@@ -20,7 +20,7 @@ $(EMACS) -f moon/install-package
 autoload: init.el
 >@echo "Generating autoload files" ;\
 $(EMACS) -f moon/generate-autoload-file ;\
-rm -f .local/autoloads.el~
+# rm -f .local/autoloads.el~
 
 autoremove: init.el
 >@echo "Removing unused packages" ;\
