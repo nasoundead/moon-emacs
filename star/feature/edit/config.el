@@ -12,12 +12,21 @@
 
 (use-package| expand-region
   :commands er/expand-region)
-
+;; expand-region's prompt can't tell what key contract-region is bound to, so we
+;; tell it explicitly.
+(setq expand-region-contract-fast-key "V")
+; (map!
+  ; (after! evil
+; ;; expand-region
+      ; :v  "v"  #'er/expand-region
+      ; :v  "V"  #'er/contract-region))
 (post-config| general
   (moon-g-leader
-    "v" #'er/expand-region)
+    "v" #'er/expand-region
+	"V" #'er/contract-region)
   (moon-default-leader
-    "v" #'er/expand-region))
+    "v" #'er/expand-region
+	"V" #'er/contract-region))
 
 
 

@@ -76,6 +76,10 @@
 (load| core-edit)
 (load| core-keybinds)
 
+
+(add-to-list 'load-path moon-core-dir)
+(require 'core-lib)
+
 (fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
 (setq-default
